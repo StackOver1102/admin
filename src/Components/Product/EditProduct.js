@@ -8,6 +8,7 @@ import Loading from "../LoadingError/LoadingError";
 import * as ProductService from "../../Services/ProductService";
 import { fetchAsyncProductSingle } from "../../features/productSlide/productSlice";
 import { useMutationHooks } from "../../hooks/useMutationHooks";
+import { updateProductSingle } from "../../features/productSlide/ProductSliceNew";
 
 const ToastObjects = {
   pauseOnFocusLoss: false,
@@ -32,13 +33,22 @@ const EditProductMain = (props) => {
   const dispatch = useDispatch();
 
   const handleGetDetailsProduct = async (id) => {
-    // const res = await ProductService.getDetilsProduct(id);
-    dispatch(fetchAsyncProductSingle(id));
+    const res = await ProductService.getDetilsProduct(id);
+    // console.log(res)
+    setTitle(res.title);
+    setBrand(res.brand);
+    setCategory(res.category);
+    setDescription(res.description);
+    setDiscount(res.discountPercentage);
+    setImages(res.images);
+    setRate(res.rating);
+    setStock(res.stock);
+    setPrice(res.price);
+    dispatch(updateProductSingle({ res }));
   };
-  const { productSingle, productSingleStatus } = useSelector(
-    (state) => state.products
+  const { productSingle } = useSelector(
+    (state) => state.ProductSignle
   );
-
   const mutation = useMutationHooks((data) => {
     const { id, access_token, ...rests } = data;
     ProductService.updateProduct(id, rests, access_token);
@@ -48,14 +58,14 @@ const EditProductMain = (props) => {
     e.preventDefault();
 
     mutation.mutate({
-      id:id,
+      id: id,
       title,
       brand,
       category,
       description,
       discount,
       images,
-      rating:rate,
+      rating: rate,
       stock,
       price
     });
@@ -68,17 +78,7 @@ const EditProductMain = (props) => {
 
   useEffect(() => {
     handleGetDetailsProduct(id);
-    if (productSingleStatus === "SUCCEEDED") {
-      setTitle(productSingle.title);
-      setBrand(productSingle.brand);
-      setCategory(productSingle.category);
-      setDescription(productSingle.description);
-      setDiscount(productSingle.discountPercentage);
-      setImages(productSingle.images);
-      setRate(productSingle.rating);
-      setStock(productSingle.stock);
-      setPrice(productSingle.price);
-    }
+
   }, [id]);
   return (
     <>
@@ -108,7 +108,7 @@ const EditProductMain = (props) => {
                   {/* {productSingleStatus && <Loading />} */}
 
                   {/* productSingleStatus Loading */}
-                  {productSingleStatus !== "SUCCEEDED" ? (
+                  {productSingle.length===0 ? (
                     <Loading />
                   ) : (
                     <>

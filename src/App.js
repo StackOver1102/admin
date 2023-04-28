@@ -12,6 +12,7 @@ import ProductScreen from "./Screen/ProductScreen";
 import AddProduct from "./Screen/AddProductScreen";
 import EditProductMain from "./Components/Product/EditProduct";
 import EditProductScreen from "./Screen/EditProductSreen";
+import OrderScreen from "./Screen/OrdersScreen";
 
 function App() {
   const userLogin = useSelector((state) => state.user);
@@ -38,6 +39,8 @@ function App() {
         <Route path="/login" element={<LoginScreen />} />
         <Route path="/products" element={<ProductScreen />} />
         <Route path="/addproduct" element={<AddProduct />} />
+        <Route path="/orders" element={<OrderScreen />} />
+
         <Route path="/product/:id/edit" element={<EditProductScreen />} />
       </Routes>
     </BrowserRouter>

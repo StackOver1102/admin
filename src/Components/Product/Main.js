@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Loading from "../LoadingError/LoadingError";
-import Message from "../LoadingError/Error";
-import DataTable from "react-data-table-component";
 import * as ProductService from "../../Services/ProductService";
+import Table from "../Table/Table";
 
 const MainProducts = () => {
   const dispatch = useDispatch();
@@ -12,12 +11,25 @@ const MainProducts = () => {
   // const productList = useSelector((state) => state.products);
   // const { productsStatus } = productList;
   const [tempData, setTempData] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
   const [search, SetSearch] = useState("");
+  const handleCloseModal = () => setShowModal(false);
 
   // const productDelete = useSelector((state) => state.productDelete);
   // const { error: errorDelete, success: successDelete } = productDelete;
 
+  const handleDelete = async (id) => {
+    if(id){
+      setShowModal(true)
+
+      await ProductService.deleteProduct(id)
+        .then((res) => {
+          hangldeGetAll();
+        })
+    }
+    handleCloseModal()
+  }
   const columns = [
     {
       name: "Image",
@@ -66,12 +78,22 @@ const MainProducts = () => {
     {
       name: "Action",
       selector: (row) => (
-        <Link
-          to={`/product/${row._id}/edit`}
+        <>
+          <Link
+            to={`/product/${row._id}/edit`}
           // className="btn btn-sm btn-outline-success p-2 pb-3 col-md-6"
-        >
-          <button className="btn btn-primary">Edit</button>
-        </Link>
+          >
+            <button className="btn btn-primary">Edit</button>
+          </Link>
+          <Link
+            style={{ marginLeft: "15px" }}
+            onClick={() => handleDelete(row._id)}
+          // className="btn btn-sm btn-outline-success p-2 pb-3 col-md-6"
+          >
+            <button className="btn btn-primary">Delete</button>
+          </Link>
+        </>
+
       ),
     },
   ];
@@ -112,28 +134,7 @@ const MainProducts = () => {
             <Loading />
           ) : (
             <div className="row">
-              <DataTable
-                columns={columns}
-                data={tempData}
-                pagination
-                fixedHeader
-                fixedHeaderScrollHeight="450px"
-                progressComponent
-                selectableRows
-                selectableRowsHighlight
-                subHeader
-                subHeaderComponent={
-                  <input
-                    type="text"
-                    placeholder="Search by id"
-                    className="w-25 form-control"
-                    value={search}
-                    onChange={(e) => {
-                      SetSearch(e.target.value);
-                    }}
-                  />
-                }
-              />
+              <Table data={tempData} columns={columns} sub={true} show={showModal} handleCloseModal={handleCloseModal} handleDelete={handleDelete} />
             </div>
           )}
         </div>

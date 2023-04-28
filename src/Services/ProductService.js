@@ -16,7 +16,12 @@ export const getDetilsProduct = async (id) => {
   return res.data;
 };
 
-export const updateProduct = async (id,data) => {
-  const res = await axios.put(`${API}/api/v1/product/${id}`,data);
+export const updateProduct = async (id, data) => {
+  const res = await axios.put(`${API}/api/v1/product/${id}`, data);
   return res.data;
 };
+
+export const deleteProduct = async (id) => {
+  const res = await axios.delete(`${API}/api/v1/product/${id}`);
+  return res.data;
+}
