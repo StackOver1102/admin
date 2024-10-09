@@ -3,7 +3,7 @@ import Table from "../Table/Table";
 
 const Orders = (props) => {
     const { orders } = props;
- 
+
     const columns = [
         {
             name: "ID",
@@ -32,6 +32,10 @@ const Orders = (props) => {
         }, {
             name: "Status",
             selector: (row) => row.orderStatus
+        },
+        {
+            name: "Ngày tạo",
+            selector: (row) =>  new Date(row.createdAt).toLocaleString()
         }
     ]
     return (
