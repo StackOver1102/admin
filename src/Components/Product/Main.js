@@ -20,60 +20,54 @@ const MainProducts = () => {
   // const { error: errorDelete, success: successDelete } = productDelete;
 
   const handleDelete = async (id) => {
-    if(id){
-      setShowModal(true)
+    // Check if an ID is passed
+    if (id) {
+      // Display a confirmation dialog to the user
+      const confirmDelete = window.confirm("Are you sure you want to delete this product?");
 
-      await ProductService.deleteProduct(id)
-        .then((res) => {
-          hangldeGetAll();
-        })
+      // If the user confirms, proceed with the delete operation
+      if (confirmDelete) {
+        try {
+          // Call the ProductService to delete the product
+          await ProductService.deleteProduct(id);
+
+          alert("Ok")
+        } catch (error) {
+          // Optionally, show an error message
+          alert("Error deleting product. Please try again.");
+        }
+      }
     }
-    handleCloseModal()
-  }
+  };
   const columns = [
-    {
-      name: "Image",
-      selector: (row) => (
-        <img
-          src={row.thumbnail}
-          alt={row.title}
-          class="img-thumbnail"
-          style={{ maxWidth: "50%" }}
-        />
-      ),
-    },
     {
       name: "ID",
       selector: (row) => row._id,
     },
     {
-      name: "Title",
-      selector: (row) => row.title,
+      name: "ID Nguồn",
+      selector: (row) => row.value,
+    },
+    {
+      name: "Nguồn",
+      selector: (row) => row.origin,
       sortable: true,
     },
     {
-      name: "Description",
-      selector: (row) => row.description,
+      name: "Name",
+      selector: (row) => row.label,
     },
     {
       name: "Price",
-      selector: (row) => row.price,
+      selector: (row) => row.rate,
     },
     {
-      name: "DiscountPercentage",
-      selector: (row) => row.discountPercentage,
+      name: "Min",
+      selector: (row) => row.min,
     },
     {
-      name: "Rating",
-      selector: (row) => row.rating,
-    },
-    {
-      name: "Stock",
-      selector: (row) => row.stock,
-    },
-    {
-      name: "Brand",
-      selector: (row) => row.brand,
+      name: "Max",
+      selector: (row) => row.max,
     },
     {
       name: "Action",
@@ -101,9 +95,7 @@ const MainProducts = () => {
     setLoading(true);
     const resProduct = await ProductService.getAll();
     setLoading(false);
-    setTempData(resProduct);
-
-    // dispatch(updatePay(res));
+    setTempData(resProduct.data);
   };
   useEffect(() => {
 

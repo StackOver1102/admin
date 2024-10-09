@@ -1,43 +1,52 @@
 import moment from "moment";
 import React from "react";
 import { Link } from "react-router-dom";
-import Message from "../LoadingError/Error";
 import Loading from "../LoadingError/LoadingError";
+import { formatToVND } from "../../utils/formatMoney";
 
-const LatestOrder = (props) => {
-  const { loading, error, orders } = props;
-  console.log(orders[0].products[0].totalPrice)
+const TopOrder = (props) => {
+  const { data } = props;
+  console.log("🚀 ~ TopOrder ~ data:", data)
+ 
   return (
     <div className="card-body">
-      <h4 className="card-title">New orders</h4>
-      {loading ? (
-        <Loading />
-      ) :  (
+      <h4 className="card-title">Top Order</h4>
         <div className="table-responsive">
-          <table className="table">
-            <tbody>
-              {orders.slice(0, 5).map((order) => (
-                <tr key={order._id}>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Total Orders</th>
+              <th>Total Spent</th>
+              <th>Last Order Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data && data.length > 0 ? (
+              data.map((item, index) => (
+                <tr key={index}>
                   <td>
-                    <b>{order.user}</b>
+                  {item.user?.name || "Unknown User"}
                   </td>
-                  <td>{orders[0].products[0].title}</td>
-                  <td>$ {order.products[0].totalPrice}</td>
-
-                  <td>{moment(order.createdAt).calendar()}</td>
-                  <td className="d-flex justify-content-end align-item-center">
-                    <Link to={`/order/${order._id}`} className="text-success">
-                      <i className="fas fa-eye"></i>
-                    </Link>
-                  </td>
+                  <td>{item.orderCount}</td>
+                  <td>${formatToVND(item.totalSpent.toFixed(2))}</td>
+                  <td>{moment(item.lastOrderDate).format("YYYY-MM-DD")}</td>
+                  
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="text-center">
+                  No top orders available.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
         </div>
-      )}
+      
     </div>
   );
 };
 
-export default LatestOrder;
+export default TopOrder;

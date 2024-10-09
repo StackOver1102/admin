@@ -57,20 +57,21 @@ const Login = () => {
   };
   const handleGetDetailsUser = async (id, token) => {
     const res = await UserService.getDetailsUser(id, token);
-    // console.log(res);
-    dispatch(updateUser({ ...res?.data, access_token: token }));
+    dispatch(updateUser({ ...res, access_token: token }));
   };
   useEffect(() => {
     if (error === null && isSuccess) {
-      localStorage.setItem("access_token", JSON.stringify(data?.access_token));
+      console.log("🚀 ~ useEffect ~ data:", data)
+
+      localStorage.setItem("access_token", JSON.stringify(data?.token));
       localStorage.setItem(
         "refresh_token",
         JSON.stringify(data?.refresh_token)
       );
-      if (data?.access_token) {
-        const decoded = jwt_decode(data?.access_token);
+      if (data?.token) {
+        const decoded = jwt_decode(data?.token);
         if (decoded?.id) {
-          handleGetDetailsUser(decoded?.id.id, data?.access_token);
+          handleGetDetailsUser(decoded?.id, data?.token);
         }
         if (!toast.isActive(toastId.current)) {
           toastId.current = toast.success("Thành công", Toastobjects);

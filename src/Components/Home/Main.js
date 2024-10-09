@@ -1,31 +1,29 @@
 import React, { useEffect, useState } from "react";
 import TopTotal from "./TopTotal";
-import LatestOrder from "./LasterOrder";
 import SaleStatistics from "./SalesStatistic";
 import ProductsStatistics from "./ProductsStatistics";
-import { useDispatch, useSelector } from "react-redux";
-import * as ProductService from "../../Services/ProductService";
-import { useQuery } from "react-query";
-import * as PayService from "../../Services/OrderSevice";
+import { useDispatch } from "react-redux";
+import axios from "axios";
+import { API } from "../../utils/apiUrl";
+import TopOrder from "./LasterOrder";
 
 const Main = () => {
-  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [orders, setOrders] = useState([]);
-  const [products, setProduct] = useState([]);
+  const [data, setData] = useState(null); // Initialize state to hold the API data
+  const [error, setError] = useState(null); // State to track any errors
 
-  const hangldeGetAll = async () => {
-    setLoading(true);
-    const res = await PayService.getPay();
-    const resProduct = await ProductService.getAll();
-    setOrders(res);
-    setProduct(resProduct)
-    setLoading(false)
-    
-    // dispatch(updatePay(res));
+  // Function to fetch data from API
+  const handleGetAll = async () => {
+    try {
+      const result = await axios.get(`${API}/report`); // Replace `${API}` with your actual API URL
+      setData(result.data); // Set the fetched data to state
+    } catch (error) {
+      setError(error.message); // Handle and store the error in state
+    }
   };
   useEffect(() => {
-    hangldeGetAll();
+    handleGetAll();
   }, []);
   return (
     <>
@@ -34,17 +32,17 @@ const Main = () => {
           <h2 className="content-title"> Dashboard </h2>
         </div>
         {/* Top Total */}
-        <TopTotal orders={orders} products={products} />
+        <TopTotal totalSale={data?.totalYearRevenue} orderCount={data?.orderCount} productCount={data?.serviceCount} />
 
         <div className="row">
           {/* STATICS */}
-          <SaleStatistics />
-          <ProductsStatistics />
+          <SaleStatistics totalRevenueByOrigin={data?.totalRevenueByOrigin || []} />
+          <ProductsStatistics totalRevenueByMonth={data?.totalRevenueByMonth || []} />
         </div>
 
         {/* LATEST ORDER */}
         <div className="card mb-4 shadow-sm">
-          {/* <LatestOrder orders={orders} loading={loading}  /> */}
+          <TopOrder data={data?.topOrders} />
         </div>
       </section>
     </>

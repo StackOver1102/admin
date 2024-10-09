@@ -44,7 +44,7 @@ const Sidebar = () => {
                 <span className="text">Products</span>
               </NavLink>
             </li>
-        
+
             <li className="menu-item d-none">
               <NavLink
                 activeClassName="active"
@@ -75,23 +75,12 @@ const Sidebar = () => {
                 <span className="text">Users</span>
               </NavLink>
             </li>
-            <li className="menu-item">
-              <NavLink
-                activeClassName="active"
-                className="menu-link "
-                to="/message"
-              >
-                {/* <i class="fa-solid fa-message"></i> */}
-                <i className="icon far fa-envelope"></i>
-                <span className="text">Message</span>
-              </NavLink>
-            </li>
 
             <li className="menu-item ">
               <NavLink
                 activeClassName="active"
                 className="menu-link  "
-                to="/updates"
+                to="/money"
               >
                 <i className="icon fas fa-usd-circle"></i>
                 <span className="text">Money</span>

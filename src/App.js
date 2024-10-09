@@ -13,6 +13,12 @@ import AddProduct from "./Screen/AddProductScreen";
 import EditProductMain from "./Components/Product/EditProduct";
 import EditProductScreen from "./Screen/EditProductSreen";
 import OrderScreen from "./Screen/OrdersScreen";
+import UserScreen from "./Screen/UserScreen";
+import EditUserScreen from "./Screen/UserEditScreen";
+import MoneyScreen from "./Screen/MoneyScreen";
+import AddMoney from "./Screen/AddMoneyScreen";
+import HistoryMoneyScreen from "./Screen/HistoryMoneyScreen";
+import PrivateRoutes from "./Components/PrivateRoute";
 
 function App() {
   const userLogin = useSelector((state) => state.user);
@@ -35,13 +41,21 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<HomeScreen />} />
         <Route path="/login" element={<LoginScreen />} />
-        <Route path="/products" element={<ProductScreen />} />
-        <Route path="/addproduct" element={<AddProduct />} />
-        <Route path="/orders" element={<OrderScreen />} />
+        <Route element={<PrivateRoutes />}>
 
-        <Route path="/product/:id/edit" element={<EditProductScreen />} />
+          <Route path="/" element={<HomeScreen />} />
+          <Route path="/products" element={<ProductScreen />} />
+          <Route path="/addproduct" element={<AddProduct />} />
+          <Route path="/orders" element={<OrderScreen />} />
+          <Route path="/users" element={<UserScreen />} />
+          <Route path="/money" element={<MoneyScreen />} />
+          <Route path="/history" element={<HistoryMoneyScreen />} />
+          <Route path="/money/create" element={<AddMoney />} />
+
+          <Route path="/product/:id/edit" element={<EditProductScreen />} />
+          <Route path="/users/:id/edit" element={<EditUserScreen />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

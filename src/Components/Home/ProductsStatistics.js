@@ -1,26 +1,68 @@
 import React from "react";
+import { Line } from "react-chartjs-2";
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
 
-const ProductsStatistics = () => {
+// Register chart components
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+
+const SalesMonthStatistics = (props) => {
+  const { totalRevenueByMonth } = props;
+
+  // Prepare the chart data
+  const labels = totalRevenueByMonth.map((item) => `Month ${item._id.month}`);
+  const data = {
+    labels,
+    datasets: [
+      {
+        label: "Total Revenue (VND)",
+        data: totalRevenueByMonth.map((item) => item.totalRevenue),
+        borderColor: "rgba(75, 192, 192, 1)",
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        fill: true,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: "Monthly Sales Statistics",
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: function (value) {
+            return new Intl.NumberFormat("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            }).format(value);
+          },
+        },
+      },
+    },
+  };
+
   return (
     <div className="col-xl-6 col-lg-12">
       <div className="card mb-4 shadow-sm">
         <article className="card-body">
-          <h5 className="card-title">Products statistics</h5>
-          <iframe
-            style={{
-              background: "#FFFFFF",
-              border: "none",
-              borderRadius: "2px",
-              boxShadow: "0 2px 10px 0 rgba(70, 76, 79, .2);",
-              width: "100%",
-              height: "350px",
-            }}
-            src="https://charts.mongodb.com/charts-view-mhovz/embed/charts?id=633ac541-9f7b-430f-861b-45f56076e45e&maxDataAge=3600&theme=light&autoRefresh=true">
-          </iframe>
+          <h5 className="card-title">Sales Month Statistics</h5>
+          {totalRevenueByMonth && totalRevenueByMonth.length > 0 ? (
+            <Line data={data} options={options} />
+          ) : (
+            <p>No data available</p>
+          )}
         </article>
       </div>
     </div>
   );
 };
 
-export default ProductsStatistics;
+export default SalesMonthStatistics;

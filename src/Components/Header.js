@@ -25,7 +25,8 @@ const Header = () => {
   }, []);
 
   const logoutHandler = () => {
-    // dispatch(logout());
+    window.localStorage.clear()
+    window.location.reload()
   };
 
   return (

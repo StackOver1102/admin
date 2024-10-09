@@ -20,31 +20,21 @@ const ToastObjects = {
 const EditProductMain = (props) => {
   const { id } = props;
 
-  const [title, setTitle] = useState("");
   const [rate, setRate] = useState(0);
-  const [stock, setStock] = useState(0);
-  const [discount, setDiscount] = useState(0);
-  const [price, setPrice] = useState(0);
-  const [category, setCategory] = useState("");
-  const [description, setDescription] = useState("");
-  const [brand, setBrand] = useState("");
-  const [images, setImages] = useState([]);
-
-  const dispatch = useDispatch();
+  const [detalProduct, setDetail] = useState();
+  const [loading, setLoading] = useState(true);
 
   const handleGetDetailsProduct = async (id) => {
+
     const res = await ProductService.getDetilsProduct(id);
-    // console.log(res)
-    setTitle(res.title);
-    setBrand(res.brand);
-    setCategory(res.category);
-    setDescription(res.description);
-    setDiscount(res.discountPercentage);
-    setImages(res.images);
-    setRate(res.rating);
-    setStock(res.stock);
-    setPrice(res.price);
-    dispatch(updateProductSingle({ res }));
+    if (res && res.data) {
+      setDetail(res.data)
+    }
+    else {
+      setDetail({})
+    }
+    setLoading(false)
+
   };
   const { productSingle } = useSelector(
     (state) => state.ProductSignle
@@ -59,27 +49,24 @@ const EditProductMain = (props) => {
 
     mutation.mutate({
       id: id,
-      title,
-      brand,
-      category,
-      description,
-      discount,
-      images,
-      rating: rate,
-      stock,
-      price
+      rate
     });
 
-    // mutation.mutate(decoded?.id, { phone, name, email, sex })
-  };
-  const submitHandler = (e) => {
-    e.preventDefault();
   };
 
   useEffect(() => {
     handleGetDetailsProduct(id);
 
   }, [id]);
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(`Error updating product: ${error.message}`);
+    }
+    if (isSuccess) {
+      toast.success("Product updated successfully!");
+    }
+  }, [isError, isSuccess, error]);
   return (
     <>
       <Toast />
@@ -97,7 +84,7 @@ const EditProductMain = (props) => {
             </div>
           </div>
 
-          <div className="row mb-4">
+          {loading ? <Loading /> : <div className="row mb-4">
             <div className="col-xl-12 col-lg-12">
               <div className="card mb-4 shadow-sm">
                 <div className="card-body">
@@ -105,140 +92,24 @@ const EditProductMain = (props) => {
                   {false && <Message variant="alert-danger">error</Message>}
                   {/* Update Loading */}
 
-                  {/* {productSingleStatus && <Loading />} */}
-
-                  {/* productSingleStatus Loading */}
-                  {productSingle.length===0 ? (
-                    <Loading />
-                  ) : (
-                    <>
-                      <div className="mb-4">
-                        <label htmlFor="product_title" className="form-label">
-                          Product title
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="Type here"
-                          className="form-control"
-                          id="product_title"
-                          required
-                          value={title}
-                          onChange={(e) => setTitle(e.target.value)}
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <label htmlFor="product_price" className="form-label">
-                          Category
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="Type here"
-                          className="form-control"
-                          id="product_price"
-                          required
-                          value={category}
-                          onChange={(e) => setCategory(e.target.value)}
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <label htmlFor="product_price" className="form-label">
-                          Description
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="Type here"
-                          className="form-control"
-                          id="product_price"
-                          required
-                          value={description}
-                          onChange={(e) => setDescription(e.target.value)}
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <label htmlFor="product_price" className="form-label">
-                          Brand
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="Type here"
-                          className="form-control"
-                          id="product_price"
-                          required
-                          value={brand}
-                          onChange={(e) => setBrand(e.target.value)}
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <label className="form-label">Price</label>
-                        <input
-                          type="number"
-                          placeholder="Type here"
-                          className="form-control"
-                          required
-                          value={price}
-                          onChange={(e) => setPrice(e.target.value)}
-                        ></input>
-                      </div>
-                      <div className="mb-4">
-                        <label className="form-label">Rating</label>
-                        <input
-                          type="number"
-                          placeholder="Type here"
-                          className="form-control"
-                          required
-                          value={rate}
-                          onChange={(e) => setRate(e.target.value)}
-                        ></input>
-                      </div>
-                      <div className="mb-4">
-                        <label className="form-label">Stock</label>
-                        <input
-                          type="number"
-                          placeholder="Type here"
-                          className="form-control"
-                          required
-                          value={stock}
-                          onChange={(e) => setStock(e.target.value)}
-                        ></input>
-                      </div>
-                      <div className="mb-4">
-                        <label className="form-label">DiscountPercentage</label>
-                        <input
-                          type="number"
-                          placeholder="Type here"
-                          className="form-control"
-                          required
-                          value={discount}
-                          onChange={(e) => setDiscount(e.target.value)}
-                        ></input>
-                      </div>
-                      <div class="mb-3">
-                        <label for="formFileMultiple" class="form-label">
-                          Images
-                        </label>
-                        <input
-                          class="form-control"
-                          type="file"
-                          id="formFileMultiple"
-                          // onChange={handleFileInputChange}
-                          multiple
-                        />
-                        <div className="d-flex mt-3 ">
-                          {productSingle.images.map((item) => (
-                            <img
-                              src={item}
-                              width="10%"
-                              style={{ marginLeft: "12px" }}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </>
-                  )}
+                  <div className="mb-4">
+                    <label htmlFor="product_title" className="form-label">
+                      Rate
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Type here"
+                      className="form-control"
+                      id="product_title"
+                      required
+                      value={detalProduct?.rate}
+                      onChange={(e) => setRate(e.target.value)}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </div>}
         </form>
       </section>
     </>

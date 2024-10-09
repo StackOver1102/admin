@@ -1,25 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 const TopTotal = (props) => {
-  const { orders, products } = props;
-  const [totalPrice, setTotalPrice] = useState(0);
-
-  useEffect(() => {
-    if (orders) {
-      const totalPrices = orders.map((order) => {
-        const totalSale = order.products.reduce((acc, product) => {
-          return acc + product.totalPrice;
-        }, 0);
-        return totalSale;
-      });
-
-      const totalPriceSum = totalPrices.reduce((acc, price) => {
-        return acc + price;
-      }, 0);
-
-      setTotalPrice(totalPriceSum);
-    }
-  }, [orders]);
+  const { totalSale , orderCount, productCount} = props;
 
   return (
     <div className="row">
@@ -30,7 +12,7 @@ const TopTotal = (props) => {
               <i className="text-primary fas fa-usd-circle"></i>
             </span>
             <div className="text">
-              <h6 className="mb-1">Total Sales</h6> <span>$ {totalPrice.toFixed(2)}</span>
+              <h6 className="mb-1">Tổng doanh thu</h6> <span>$ {totalSale?.toFixed(2)}</span>
             </div>
           </article>
         </div>
@@ -42,8 +24,8 @@ const TopTotal = (props) => {
               <i className="text-success fas fa-bags-shopping"></i>
             </span>
             <div className="text">
-              <h6 className="mb-1">Total Orders</h6>
-              {orders ? <span>{orders.length}</span> : <span>0</span>}
+              <h6 className="mb-1">Tổng đơn hàng</h6>
+              {orderCount}
             </div>
           </article>
         </div>
@@ -55,8 +37,8 @@ const TopTotal = (props) => {
               <i className="text-warning fas fa-shopping-basket"></i>
             </span>
             <div className="text">
-              <h6 className="mb-1">Total Products</h6>
-              {products ? <span>{products.length}</span> : <span>0</span>}
+              <h6 className="mb-1">Tông services</h6>
+              {productCount}
             </div>
           </article>
         </div>

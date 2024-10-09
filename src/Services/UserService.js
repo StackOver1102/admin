@@ -3,12 +3,12 @@ import { API } from "../utils/apiUrl"
 
 
 export const loginUser = async (data) => {
-    const res = await axios.post(`${API}/api/v1/users/login/admin`, data)
+    const res = await axios.post(`${API}/api/users/loginAdm`, data)
     return res.data
 }
 
 export const getDetailsUser = async (id, access_token) => {
-    const res = await axios.get(`${API}/api/v1/users/${id}`, {
+    const res = await axios.get(`${API}/api/users/${id}`, {
         headers: {
             Authorization: `Bearer ${access_token}`,
         }
