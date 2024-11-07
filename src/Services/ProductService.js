@@ -1,8 +1,12 @@
 import axios from "axios";
 import { API } from "../utils/apiUrl";
 
-export const getAll = async () => {
-  const res = await axios.get(`${API}/api/service`);
+export const getAll = async (access_token) => {
+  const res = await axios.get(`${API}/products/getAll`, {}, {
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+    }
+  });
   return res.data;
 };
 
@@ -12,12 +16,12 @@ export const createProduct = async (data) => {
 };
 
 export const getDetilsProduct = async (id) => {
-  const res = await axios.get(`${API}/api/service/${id}`);
+  const res = await axios.get(`${API}/products/${id}`);
   return res.data;
 };
 
 export const updateProduct = async (id, data) => {
-  const res = await axios.put(`${API}/api/v1/product/${id}`, data);
+  const res = await axios.patch(`${API}/products/${id}`, data);
   return res.data;
 };
 

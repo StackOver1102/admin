@@ -4,18 +4,23 @@ import Loading from "../LoadingError/LoadingError";
 import Users from "./User";
 import axios from "axios";
 import { API } from "../../utils/apiUrl";
+import { useSelector } from "react-redux";
 
 const UserMain = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  const fetchData = async () => {
+  const user = useSelector((state) => state.user)
+  const fetchData = async (access_token) => {
     try {
       setLoading(true); // Set loading to true before data fetch
-      const getData = await axios.get(`${API}/api/users`);
+      const getData = await axios.get(`${API}/users`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        }
+      });
       if (getData.data) {
-        setUsers(getData.data);
+        setUsers(getData.data.data);
       } else {
         setUsers([]);
       }
@@ -27,8 +32,10 @@ const UserMain = () => {
   };
 
   useEffect(() => {
-    fetchData(); // Fetch the data when the component mounts
-  }, []);
+    if(user.access_token){
+      fetchData(user.access_token); // Fetch the data when the component mounts
+    }
+  }, [user]);
 
   return (
     <section className="content-main">

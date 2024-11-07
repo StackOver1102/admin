@@ -3,12 +3,16 @@ import { API } from "../utils/apiUrl"
 
 
 export const loginUser = async (data) => {
-    const res = await axios.post(`${API}/api/users/loginAdm`, data)
-    return res.data
+    try {
+        const res = await axios.post(`${API}/users/loginadmin`, data)
+        return res.data
+    } catch (error) {
+        throw error;
+    }
 }
 
-export const getDetailsUser = async (id, access_token) => {
-    const res = await axios.get(`${API}/api/users/${id}`, {
+export const getDetailsUser = async ( access_token) => {
+    const res = await axios.get(`${API}/users/detail`, {
         headers: {
             Authorization: `Bearer ${access_token}`,
         }

@@ -22,6 +22,7 @@ const Login = () => {
   window.scrollTo(0, 0);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showLoader, setShowLoader] = useState(false)
   const dispatch = useDispatch();
   const location = useLocation();
   const history = useNavigate();
@@ -37,58 +38,73 @@ const Login = () => {
     draggable: true,
     progress: undefined,
   };
-  const mutation = useMutationHooks((data) => UserService.loginUser(data));
-  const { data, error, isLoading, isError, isSuccess } = mutation;
+  // const mutation = useMutationHooks((data) => UserService.loginUser(data));
+  const mutation = useMutationHooks(
+    async (data) => {
+      try {
+        return await UserService.loginUser(data);
+      } catch (error) {
+        throw error
+      }
+    },
+    {
+      onMutate: () => {
+        setShowLoader(true);
+      },
+      onSuccess: async (data) => {
+        const access_token = data.data.access_token;
+        setShowLoader(false);
+        if (!toast.isActive(toastId.current)) {
+          toastId.current = toast.success("Thành công", Toastobjects);
+        }
+        localStorage.setItem("access_token", JSON.stringify(access_token));
+        const res = await UserService.getDetailsUser(access_token);
+        dispatch(updateUser({ ...res.data, access_token: access_token }));
+        history("/");
+      },
+      onError: (error) => {
+        setShowLoader(false);
+
+        // Extract the error message from the error object
+        const errorMessage = error?.message || "Login Failed";
+        if (!toast.isActive(toastId.current)) {
+          toastId.current = toast.error(errorMessage, Toastobjects);
+        }
+        // Show the error message in the toast
+        // showErrorToast(`Login failed: ${errorMessage}`);
+      },
+      onSettled: () => {
+        setShowLoader(false);
+      },
+    }
+  );
+
   const submitHandler = async (e) => {
     e.preventDefault();
-    if (username === "" && password === "") {
-      if (!toast.isActive(toastId.current)) {
-        toastId.current = toast.error(
-          "Vui lòng điền đẩy đủ thông tin",
-          Toastobjects
-        );
+    try {
+      if (username === "" && password === "") {
+        if (!toast.isActive(toastId.current)) {
+          toastId.current = toast.error(
+            "Vui lòng điền đẩy đủ thông tin",
+            Toastobjects
+          );
+        }
+      } else {
+        await mutation.mutateAsync({
+          email: username,
+          password,
+        });
       }
-    } else {
-      mutation.mutate({
-        username,
-        password,
-      });
+    } catch (error) {
+      console.log("🚀 ~ submitHandler ~ error:", error)
+      // throw error
     }
   };
   const handleGetDetailsUser = async (id, token) => {
     const res = await UserService.getDetailsUser(id, token);
     dispatch(updateUser({ ...res, access_token: token }));
   };
-  useEffect(() => {
-    if (error === null && isSuccess) {
-      console.log("🚀 ~ useEffect ~ data:", data)
 
-      localStorage.setItem("access_token", JSON.stringify(data?.token));
-      localStorage.setItem(
-        "refresh_token",
-        JSON.stringify(data?.refresh_token)
-      );
-      if (data?.token) {
-        const decoded = jwt_decode(data?.token);
-        if (decoded?.id) {
-          handleGetDetailsUser(decoded?.id, data?.token);
-        }
-        if (!toast.isActive(toastId.current)) {
-          toastId.current = toast.success("Thành công", Toastobjects);
-        }
-      }
-
-      // dispatch(updateUser({ data }))
-    } else if (error) {
-      if (!toast.isActive(toastId.current)) {
-        toastId.current = toast.error(error.response.data.error, Toastobjects);
-      }
-    }
-
-    if (email !== "") {
-      history("/");
-    }
-  }, [isSuccess, history, email, error]);
   return (
     <>
       <Toast />

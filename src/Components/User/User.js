@@ -33,9 +33,13 @@ const Users = (props) => {
             selector: (row) => row.isBand ? "true" : "false"
         },
         {
+            name: "Money",
+            selector: (row) => row.money
+        },
+        {
             name: "Action",
             selector: (row) => (
-                <>
+                <div className="d-flex item-center">
                     <Link
                         to={`/users/${row._id}/edit`}
                     // className="btn btn-sm btn-outline-success p-2 pb-3 col-md-6"
@@ -49,7 +53,7 @@ const Users = (props) => {
                     >
                         <button className="btn btn-primary">Delete</button>
                     </Link>
-                </>
+                </div>
 
             ),
         },

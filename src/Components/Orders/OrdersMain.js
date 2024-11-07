@@ -4,6 +4,7 @@ import Loading from "../LoadingError/LoadingError";
 import Orders from "./Orders";
 import axios from "axios";
 import { API } from "../../utils/apiUrl";
+import { useSelector } from "react-redux";
 
 const OrderMain = () => {
   const [orders, setOrders] = useState([]);
@@ -12,17 +13,25 @@ const OrderMain = () => {
   const [endDate, setEndDate] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [filteredOrders,setFilterOrders] = useState([])
+  const user = useSelector((state) => state.user)
   const fetchData = async () => {
     try {
-      const getData = await axios.get(`${API}/api/orders`);
+      const getData = await axios.get(`${API}/orders`, {
+        headers: {
+          Authorization: `Bearer ${user.access_token}`,
+        }
+      });
       if (getData.data) {
-        setOrders(getData.data);
+        setOrders(getData.data.data);
       } else {
         setOrders([]);
       }
     } catch (error) {
-      console.log(error);
+      if (error.response.status === 401) {
+        window.localStorage.clear()
+        window.location.reload()
+      }
       setError("Failed to fetch orders");
     } finally {
       setLoading(false);
@@ -34,22 +43,29 @@ const OrderMain = () => {
   }, []);
 
   // Filter orders based on filter text and date range
-  const filteredOrders = orders.filter((order) => {
-    const orderDate = new Date(order.createdAt);
+  useEffect(() => {
+    if (orders) {
+      const filteredOrders = orders.filter((order) => {
+    
 
-    // Check if order matches the text filter (ID User, Service, Status)
-    const matchesTextFilter =
-      order.user.toLowerCase().includes(filterText.toLowerCase()) ||
-      order.orderItems[0].service.toLowerCase().includes(filterText.toLowerCase()) ||
-      order.orderStatus.toLowerCase().includes(filterText.toLowerCase());
+        const orderDate = new Date(order.createdAt);
 
-    // Check if order matches the date range filter
-    const matchesDateFilter =
-      (!startDate || orderDate >= new Date(startDate)) &&
-      (!endDate || orderDate <= new Date(endDate));
+        // Check if order matches the text filter (ID User, Service, Status)
+        const matchesTextFilter =
+          order?.user?.toLowerCase().includes(filterText.toLowerCase()) ||
+          order?.orderItems?.service.toLowerCase().includes(filterText.toLowerCase()) ||
+          order?.orderStatus?.toLowerCase().includes(filterText.toLowerCase()) || 
+          order?._id?.toLowerCase().includes(filterText.toLowerCase());
+        // Check if order matches the date range filter
+        const matchesDateFilter =
+          (!startDate || orderDate >= new Date(startDate)) &&
+          (!endDate || orderDate <= new Date(endDate));
 
-    return matchesTextFilter && matchesDateFilter;
-  });
+        return matchesTextFilter && matchesDateFilter;
+      });
+      setFilterOrders(filteredOrders)
+    }
+  }, [orders, filterText])
 
   return (
     <section className="content-main">

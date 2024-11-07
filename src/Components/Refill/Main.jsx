@@ -1,27 +1,26 @@
 import React, { useEffect, useState } from "react";
 import Message from "../LoadingError/Error";
 import Loading from "../LoadingError/LoadingError";
-import Money from "./Money";
 import axios from "axios";
-import { Link } from "react-router-dom"; // Add this for linking
 import { API } from "../../utils/apiUrl";
 import { useSelector } from "react-redux";
+import Refill from "./Refill";
 
-const PayMain = () => {
-  const [pay, setPay] = useState([]);
+const RefillMain = () => {
+  const [deposit, setDeposit] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const user = useSelector((state) => state.user)
   const fetchData = async (access_token) => {
     setLoading(true);
     try {
-      const getData = await axios.get(`${API}/invoice`, {
+      const getData = await axios.get(`${API}/refill`, {
         headers: {
           Authorization: `Bearer ${access_token}`,
         }
       });
       if (getData.data) {
-        setPay(getData.data.data);
+        setDeposit(getData.data.data);
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
@@ -44,11 +43,13 @@ const PayMain = () => {
       fetchData(user.access_token);
     }
   }, [user]);
-
+  const onUpdate = () => {
+    fetchData(user.access_token);
+  };
   return (
     <section className="content-main">
       <div className="content-header">
-        <h2 className="content-title">History Invoice</h2>
+        <h2 className="content-title">Refill</h2>
         {/* Add "Create New" button */}
       </div>
 
@@ -60,7 +61,7 @@ const PayMain = () => {
             ) : error ? (
               <Message variant="alert-danger">{error}</Message>
             ) : (
-              <Money pay={pay} />
+              <Refill deposit={deposit} onUpdate={onUpdate} user={user}/>
             )}
           </div>
         </div>
@@ -69,4 +70,4 @@ const PayMain = () => {
   );
 };
 
-export default PayMain;
+export default RefillMain;

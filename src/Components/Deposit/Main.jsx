@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from "react";
 import Message from "../LoadingError/Error";
 import Loading from "../LoadingError/LoadingError";
-import Money from "./Money";
 import axios from "axios";
 import { Link } from "react-router-dom"; // Add this for linking
 import { API } from "../../utils/apiUrl";
 import { useSelector } from "react-redux";
+import Deposit from "./Deposit";
 
-const PayMain = () => {
-  const [pay, setPay] = useState([]);
+const DepositMain = () => {
+  const [deposit, setDeposit] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const user = useSelector((state) => state.user)
   const fetchData = async (access_token) => {
     setLoading(true);
     try {
-      const getData = await axios.get(`${API}/invoice`, {
+      const getData = await axios.get(`${API}/deposit`, {
         headers: {
           Authorization: `Bearer ${access_token}`,
         }
       });
       if (getData.data) {
-        setPay(getData.data.data);
+        setDeposit(getData.data.data);
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
@@ -44,7 +44,9 @@ const PayMain = () => {
       fetchData(user.access_token);
     }
   }, [user]);
-
+  const onUpdate = () => {
+    fetchData(user.access_token);
+  };
   return (
     <section className="content-main">
       <div className="content-header">
@@ -60,7 +62,7 @@ const PayMain = () => {
             ) : error ? (
               <Message variant="alert-danger">{error}</Message>
             ) : (
-              <Money pay={pay} />
+              <Deposit deposit={deposit} onUpdate={onUpdate} />
             )}
           </div>
         </div>
@@ -69,4 +71,4 @@ const PayMain = () => {
   );
 };
 
-export default PayMain;
+export default DepositMain;

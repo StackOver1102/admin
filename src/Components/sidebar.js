@@ -80,13 +80,33 @@ const Sidebar = () => {
               <NavLink
                 activeClassName="active"
                 className="menu-link  "
-                to="/money"
+                to="/invoice"
               >
                 <i className="icon fas fa-usd-circle"></i>
-                <span className="text">Money</span>
+                <span className="text">Invoice</span>
               </NavLink>
             </li>
             <li className="menu-item ">
+              <NavLink
+                activeClassName="active"
+                className="menu-link  "
+                to="/deposit"
+              >
+                <i className="icon fas fa-usd-circle"></i>
+                <span className="text">Deposit</span>
+              </NavLink>
+            </li>
+            <li className="menu-item ">
+              <NavLink
+                activeClassName="active"
+                className="menu-link  "
+                to="/refill"
+              >
+                <i className="icon fas fa-usd-circle"></i>
+                <span className="text">Refill</span>
+              </NavLink>
+            </li>
+            {/* <li className="menu-item ">
               <NavLink
                 activeClassName="active"
                 className="menu-link "
@@ -95,7 +115,7 @@ const Sidebar = () => {
                 <i className="icon fas fa-usd-circle"></i>
                 <span className="text">History</span>
               </NavLink>
-            </li>
+            </li> */}
           </ul>
           <br />
           <br />

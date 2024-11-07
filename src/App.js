@@ -19,25 +19,11 @@ import MoneyScreen from "./Screen/MoneyScreen";
 import AddMoney from "./Screen/AddMoneyScreen";
 import HistoryMoneyScreen from "./Screen/HistoryMoneyScreen";
 import PrivateRoutes from "./Components/PrivateRoute";
+import DepositScreen from "./Screen/Deposit";
+import RefilLScreen from "./Screen/RefillScreen";
 
 function App() {
-  const userLogin = useSelector((state) => state.user);
-  // const location = useLocation();
 
-  const dispatch = useDispatch();
-  const { email } = userLogin;
-  const pageNumber = 1;
-
-  useEffect(() => {
-    if (email !== "") {
-      dispatch(fetchAsyncProducts());
-      // hangldeGetAll()
-    }
-  }, [dispatch]);
-  const hangldeGetAll = async () => {
-    const res = await PayService.getPay();
-    dispatch(updatePay(res));
-  };
   return (
     <BrowserRouter>
       <Routes>
@@ -49,7 +35,10 @@ function App() {
           <Route path="/addproduct" element={<AddProduct />} />
           <Route path="/orders" element={<OrderScreen />} />
           <Route path="/users" element={<UserScreen />} />
-          <Route path="/money" element={<MoneyScreen />} />
+          <Route path="/invoice" element={<MoneyScreen />} />
+          <Route path="/deposit" element={<DepositScreen />} />
+          <Route path="/refill" element={<RefilLScreen />} />
+
           <Route path="/history" element={<HistoryMoneyScreen />} />
           <Route path="/money/create" element={<AddMoney />} />
 
